@@ -99,7 +99,7 @@ const generateWorld = () => {
             }
 
             if (map[x - 1] !== undefined && x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
-                // A corner with the hypotenuse facing diagonally diagonally down left
+                // A corner with the hypotenuse facing diagonally down left
                 if (map[x][y] === 1 && map[x - 1][y] === 0 && map[x - 1][y + 1] === 0 && map[x][y + 1] === 0) {
                     map[x][y] = 3;
                 }
@@ -206,6 +206,7 @@ const generateWorld = () => {
 generateWorld();
 
 // Player setup
+let score = 0;
 let playerHealth = 100;
 const maxPlayerHealth = 100;
 let playerIsAlive = true;
@@ -226,12 +227,11 @@ const crosshair = Bodies.circle(0, 0, 10, {isSensor: true, collisionFilter: { ca
 World.add(world, crosshair);
 
 // Enemies
-let enemies = [];
-for (let i = 0; i < 20; i++) {
+const spawnEnemy = () => {
     while (true) {
         const x = Math.floor(Math.random() * width) - 100;
         const y = Math.floor(Math.random() * height) - 100;
-        const enemy = spawnEnemy(x, y);
+        const enemy = createEnemyBody(x, y);
         if (Query.collides(enemy, worldWalls).length == 0) {
             enemies.push(enemy);
             World.add(world, enemy);
@@ -240,8 +240,16 @@ for (let i = 0; i < 20; i++) {
     }
 }
 
+let enemies = [];
+for (let i = 0; i < 10; i++) {
+    spawnEnemy();
+}
+
+setInterval(() => { spawnEnemy() }, 2000);
+
 // Events (Inputs, Collisions, Matter Events)
 const healthbar = document.querySelector("#healthbar .remaining-health");
+const scoreText = document.querySelector("#score");
 
 document.addEventListener("mousemove", (event) => {
     const mouseCoords = {x: event.pageX, y: event.pageY};
@@ -283,13 +291,13 @@ Events.on(engine, "collisionStart", (event) => {
             if (collision.bodyA.label === "bullet") {
                 destroyBody({body: collision.bodyA, additionalFunc: () => {
                     const explosion = createBulletExplosion(collision.bodyA.position.x, collision.bodyA.position.y);
-                    explosion.explode()
+                    explosion.explode();
                     destroyBody({body: explosion, t: 10});
                 }});
             } else {
                 destroyBody({body: collision.bodyB, additionalFunc: () => {
                     const explosion = createBulletExplosion(collision.bodyB.position.x, collision.bodyB.position.y);
-                    explosion.explode()
+                    explosion.explode();
                     destroyBody({body: explosion, t: 10});
                 }});
             }
@@ -298,6 +306,9 @@ Events.on(engine, "collisionStart", (event) => {
         if ((collision.bodyA.label === "enemy" && collision.bodyB.label === "playerBullet") ||
             (collision.bodyA.label === "playerBullet" && collision.bodyB.label === "enemy")) {
             if (collision.bodyA.label === "enemy") {
+                score += 10;
+                scoreText.innerHTML = `${score} points`;
+                spawnEnemy();
                 destroyBody({body: collision.bodyA, additionalFunc: () => {
                     const explosion = createEnemyExplosion(collision.bodyA.position.x, collision.bodyA.position.y);
                     explosion.explode();
@@ -305,6 +316,9 @@ Events.on(engine, "collisionStart", (event) => {
                 }}); // Enemy
                 destroyBody({body: collision.bodyB}); // Bullet
             } else {
+                score += 10;
+                scoreText.innerHTML = `${score} points`;
+                spawnEnemy();
                 destroyBody({body: collision.bodyB, additionalFunc: () => {
                     const explosion = createEnemyExplosion(collision.bodyB.position.x, collision.bodyB.position.y);
                     explosion.explode();

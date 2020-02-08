@@ -50,7 +50,7 @@ const createBulletExplosion = (x, y) => {
     });
 }
 
-const spawnEnemy = (x, y) => {
+const createEnemyBody = (x, y) => {
     return Bodies.polygon(
         x,
         y,
