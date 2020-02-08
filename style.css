@@ -1,0 +1,57 @@
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+#healthbar {
+    position: absolute;
+    top: 20px;
+    width: 50%;
+    height: 50px;
+
+    background-color: #e34b40;
+    z-index: 10;
+}
+
+#healthbar .remaining-health {
+    background-color: #56e340;
+    width: 100%;
+    height: 100%;
+}
+
+#gameover {
+    position: absolute;
+    display: grid;
+    text-align: center;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke-color: #e34b40;
+    -webkit-text-stroke-width: 1px;
+    text-shadow: 20px 20px 50px rgb(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+#gameover h1 {
+    display: block;
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 10rem;
+}
+
+#gameover h3 {
+    display: block;
+    font-size: 5rem;
+}
+
+.hide {
+    display: none!important;
+}
